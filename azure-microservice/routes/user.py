@@ -15,7 +15,13 @@ router = APIRouter()
 def read_user(user_id: str) -> Dict:
     try:
         user = users_container.read_item(item=user_id, partition_key=user_id)
-        return user
+        # Return only the required fields
+        filtered = {
+            "id": user.get("id"),
+            "displayName": user.get("displayName"),
+            "email": user.get("email")
+        }
+        return filtered
     except exceptions.CosmosResourceNotFoundError:
         raise HTTPException(status_code=404, detail="User not found in Cosmos DB")
 
